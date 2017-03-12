@@ -101,6 +101,7 @@ def list_get_legend_handles_labels(list_of_axes: list):
 # testing functions
 if __name__ == '__main__':
 
+    import os
     import shutil
 
     # testing the make directory function mkdif_if_not_exist

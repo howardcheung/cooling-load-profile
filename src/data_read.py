@@ -73,6 +73,10 @@ def read_data(filename: str, header: int=None,
     ]
     pddf.set_index('Time', inplace=True)
 
+    # invalidate extereme outliers
+    outlier_thres = pddf['CLG'].mean()+6*pddf['CLG'].std()
+    pddf.loc[pddf['CLG'] > outlier_thres, 'CLG'] = float('nan')
+
     # preprocessing by interpolating invalid columns
     pddf.loc[:, 'CLG'] = check_nan(pddf['CLG'])
 

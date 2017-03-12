@@ -108,12 +108,16 @@ def dfhour_profile_plot(df, folder_path, col_name='kW',
             # set minor grid line
             minorLocator = MultipleLocator(
                 (0.025 if max_value < 2.0 else 100)
-                if max_value <= 2000.0 else 2.5*10**(len(str(max_value))-2)
+                if max_value <= 2000.0 else 2.5*10**(
+                    len(str(int(max_value)))-2
+                )
             )
             ax.yaxis.set_minor_locator(minorLocator)
             majorLocator = MultipleLocator(
                 (0.05 if max_value < 2.0 else 200)
-                if max_value <= 2000.0 else 5.0*10**(len(str(max_value))-2)
+                if max_value <= 2000.0 else 5.0*10**(
+                    len(str(int(max_value)))-2
+                )
             )
             ax.yaxis.set_major_locator(majorLocator)
             plt.grid(b=True, which='major', color='k', axis='y')
