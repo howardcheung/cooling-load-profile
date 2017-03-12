@@ -14,6 +14,7 @@ from math import isnan
 import os
 
 # import third party libraries
+from numpy import where
 import pandas as pd
 
 # import user-defined libraries
@@ -125,26 +126,59 @@ def check_nan(wseries: pd.Series) -> pd.Series:
             datetime.datetime object
     """
 
-    # old slow code
-    for ind, timeind in enumerate(wseries.index):
-        if isinstance(wseries[ind], str) or isnan(wseries[ind]):
+    if len(wseries[pd.Series([
+        (type(val) == str or isnan(val)) for val in wseries
+    ], index=wseries.index)]) == 0:
+        return wseries  # nothing to change
+
+    # ensure that all are either float or nan
+    def _float_or_nan(ent):
+        """
+            Force values to be either a float or nan first
+        """
+        try:
+            return float(ent)
+        except ValueError:
+            return float('nan')
+
+    wseries = pd.Series(
+        [_float_or_nan(val) for val in wseries], index=wseries.index,
+        name=wseries.name
+    )
+
+    # continue with interpolation or extrapolation if needed
+    inds = where(
+        pd.Series([
+            (isinstance(val, str) or isnan(val)) for val in wseries
+        ], index=wseries.index)
+    )[0]  # locate the position of the problematic readings
+    for ind in inds:
+        try:
+            wseries[ind] = interpolate_with_s(
+                wseries.index[ind], wseries.index[ind-1],
+                wseries.index[ind+1],
+                wseries[ind-1], wseries[ind+1]
+            )
+            if isnan(wseries[ind]):  # interpolation does not work
+                wseries[ind] = interpolate_with_s(
+                    wseries.index[ind], wseries.index[ind-2],
+                    wseries.index[ind-1],
+                    wseries[ind-2], wseries[ind-1]
+                )
+        except IndexError:  # extrapolation
             try:
                 wseries[ind] = interpolate_with_s(
-                    timeind, wseries.index[ind-1], wseries.index[ind+1],
-                    wseries[ind-1], wseries[ind+1]
+                    wseries.index[ind], wseries.index[ind-2],
+                    wseries.index[ind-1],
+                    wseries[ind-2], wseries[ind-1]
                 )
-            except IndexError:  # extrapolation
-                try:
-                    wseries[ind] = interpolate_with_s(
-                        timeind, wseries.index[ind-2], wseries.index[ind-1],
-                        wseries[ind-2], wseries[ind-1]
-                    )
-                except IndexError:
-                    # no data available at earlier times are available
-                    wseries[ind] = interpolate_with_s(
-                        timeind, wseries.index[ind+2], wseries.index[ind+1],
-                        wseries[ind+2], wseries[ind+1]
-                    )
+            except IndexError:
+                wseries[ind] = interpolate_with_s(
+                    wseries.index[ind], wseries.index[ind+2],
+                    wseries.index[ind+1],
+                    wseries[ind+2], wseries[ind+1]
+                )
+    return wseries
 
     return wseries
 
