@@ -19,6 +19,7 @@ import pandas as pd
 # import user-defined libraries
 
 
+# write functions
 def read_data(filename: str, header: int=None,
               time_format: str='%m/%d/%y %I:%M:%S %p CST') -> pd.DataFrame:
     """

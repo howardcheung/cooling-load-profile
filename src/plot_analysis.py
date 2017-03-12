@@ -26,6 +26,7 @@ LineWidths = [a for a in itertools.chain.from_iterable(
     [[1+2*x]*4 for x in range(5)]
 )]
 
+
 # write functions
 def mkdir_if_not_exist(usrpath):
     """
@@ -39,6 +40,7 @@ def mkdir_if_not_exist(usrpath):
 
     if not Path(usrpath).exists():
         mkdir(usrpath)
+
 
 def set_date_for_xaxis():
     """
@@ -105,3 +107,5 @@ if __name__ == '__main__':
     mkdir_if_not_exist('./testtesttest/')
     assert Path('./testtesttest/').exists()
     shutil.rmtree('./testtesttest/')
+
+    print('All functions in', os.path.basename(__file__), 'are ok')
