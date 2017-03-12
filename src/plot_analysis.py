@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 """
-    This file contains functions that plots the analysis of the buildings.
+    This file contains utility functions for making plots
 
     Author: Howard Cheung (hcheun@polyu.edu.hk)
     Date: 2016/01/19
@@ -11,6 +11,8 @@
 from datetime import timedelta
 import itertools
 from math import isnan
+from os import mkdir
+from pathlib import Path
 
 # import third party libraries
 import matplotlib
@@ -25,6 +27,19 @@ LineWidths = [a for a in itertools.chain.from_iterable(
 )]
 
 # write functions
+def mkdir_if_not_exist(usrpath):
+    """
+        Make a directory at usrpath if the directory does not exist
+
+        Inputs:
+        ==========
+        usrpath: str
+            position of the path
+    """
+
+    if not Path(usrpath).exists():
+        mkdir(usrpath)
+
 def set_date_for_xaxis():
     """
         Function to set the dates on x-axis appropriately
@@ -79,3 +94,14 @@ def list_get_legend_handles_labels(list_of_axes: list):
         handles += h
         labels += l
     return handles, labels
+
+
+# testing functions
+if __name__ == '__main__':
+
+    import shutil
+
+    # testing the make directory function mkdif_if_not_exist
+    mkdir_if_not_exist('./testtesttest/')
+    assert Path('./testtesttest/').exists()
+    shutil.rmtree('./testtesttest/')
