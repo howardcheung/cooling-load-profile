@@ -5,7 +5,7 @@
     preprocess the data and wrap them into a namedtuple.
 
     Author: Howard Cheung (howard.at@gmail.com)
-    Date: 2017/12/03
+    Date: 2017/03/12
 """
 
 # import python internal libraries
@@ -179,7 +179,6 @@ def cal_each_duration(ind: int, timeind: pd.tslib.Timestamp,
 # testing functions
 if __name__ == '__main__':
 
-    print('Testing ', os.path.basename(__file__))
     for testfilename in [
         '../dat/load.csv', '../dat/load.xlsx',
         '../dat/load_whead.xlsx', '../dat/load_whead.csv'
