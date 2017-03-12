@@ -75,6 +75,10 @@ def read_data(filename: str, header: int=None,
     pddf.loc[:, 'CLG'] = check_nan(pddf['CLG'])
 
     # calculate the duration of each data point
+    pddf.loc[:, 'Duration'] = [
+        cal_each_duration(ind, timeind, pddf['CLG'])
+        for ind, timeind in enumerate(pddf['CLG'].index)
+    ]
 
     return pddf
 
@@ -144,6 +148,34 @@ def check_nan(wseries: pd.Series) -> pd.Series:
     return wseries
 
 
+def cal_each_duration(ind: int, timeind: pd.tslib.Timestamp,
+                      wseries: pd.Series) -> float:
+    """
+        This function calculates the duration for each data point in the time
+        series given by the acqusition interval of the data
+
+        Inputs:
+        ==========
+        ind: int
+            index number in the pandas Series
+
+        timeind: pd.tslib.Timestamp
+            time stamp at the index being analyzed
+
+        wseries: pd.Series
+            pandas Series data with values in float and index as
+            datetime.datetime object
+    """
+
+    length = len(wseries)
+    if ind == 0:
+        return (wseries.index[ind+1]-timeind).seconds
+    elif ind == length-1:
+        return (timeind-wseries.index[ind-1]).seconds
+    else:
+        return ((wseries.index[ind+1]-wseries.index[ind-1]).seconds)/2.0
+
+
 # testing functions
 if __name__ == '__main__':
 
@@ -159,5 +191,8 @@ if __name__ == '__main__':
             TEST_DF = read_data(testfilename, header=None)
         assert TEST_DF.loc[TEST_DF.index[2], 'CLG'] == 1
         assert isinstance(TEST_DF.index[0], pd.tslib.Timestamp)
+        assert TEST_DF.loc[TEST_DF.index[0], 'Duration'] == 60*30
+        assert TEST_DF.loc[TEST_DF.index[2], 'Duration'] == 60*30
+        assert TEST_DF.loc[TEST_DF.index[-1], 'Duration'] == 60*30
 
     print('All functions in', os.path.basename(__file__), 'are ok')
