@@ -89,6 +89,9 @@ def dfhour_profile_plot(df, folder_path, col_name='kW',
                         ]
                     )
                     max_value = max(max_value, data[-1].max())
+                # skip plot if the size of data array is insufficient
+                if len(data[0]) < 27:
+                    continue
                 # create box plot
                 plt.figure(mn*fig_num)
                 ax = plt.subplot(111)
@@ -137,7 +140,7 @@ def dfhour_profile_plot(df, folder_path, col_name='kW',
                 # save plots
                 savefig_for_file(''.join([
                    folder_path, '/', load_type, '-load-profile-',
-                   col_name, '-', '%02i' % mn, '-', '%04i' % yr
+                   col_name, '-', '%04i' % yr, '-', '%02i' % mn
                 ]), diagram_types)
 
 
@@ -154,6 +157,8 @@ if __name__ == '__main__':
     dfhour_profile_plot(PDDF, '../testplots', col_name='CLG',
                         y_label='Instantaneous building cooling load [kW]',
                         showfliers=True, diagram_types=['png'])
-    assert Path('../testplots/wkdy-load-profile-CLG-01.png').exists()
+    assert Path('../testplots/wkdy-load-profile-CLG-2015-01.png').exists()
+    assert Path('../testplots/wkdy-load-profile-CLG-2016-01.png').exists()
+    assert not Path('../testplots/wkdy-load-profile-CLG-2014-01.png').exists()
 
     print('All functions in', os.path.basename(__file__), 'are ok')
