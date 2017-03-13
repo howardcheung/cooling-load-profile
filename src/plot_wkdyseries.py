@@ -65,77 +65,80 @@ def dfhour_profile_plot(df, folder_path, col_name='kW',
     # use one plot as an example for now
     # random number for fig number
     fig_num = int(random.random()*1000.0)
-    for mn in range(1, 13):
-        for load_type in ['wkdy']:
-            # initialize
-            data = []
-            # select data
-            max_value = 0.0
-            for time in times:
-                data.append(
-                    df.loc[
-                        [
-                            (
-                                dy.weekday() <= 4 if load_type == 'wkdy'
-                                else dy.weekday() == (
-                                    5 if load_type == 'sat' else 6
-                                )
-                            ) and dy.time() == time and dy.month == mn
-                            for dy in df.index
-                        ], col_name
-                    ]
-                )
-                max_value = max(max_value, data[-1].max())
-            # create box plot
-            plt.figure(mn*fig_num)
-            ax = plt.subplot(111)
-            plt.boxplot(data, labels=[
-                time.strftime('%H:%M') if time.minute == 0 else ''
-                for time in times
-            ], showfliers=showfliers)
-            # set axis label
-            timestamp = df.loc[[
-                dy.month == mn for dy in df.index
-            ], :].index[0]
-            plt.xlabel(''.join([
-                'Time on ', (
-                    'weekdays' if load_type == 'wkdy' else (
-                        'Saturdays' if load_type == 'sat' else 'Sundays'
+    yr_array = range(df.index[0].year, df.index[-1].year+1)
+    for yr in yr_array:
+        for mn in range(1, 13):
+            for load_type in ['wkdy']:
+                # initialize
+                data = []
+                # select data
+                max_value = 0.0
+                for time in times:
+                    data.append(
+                        df.loc[
+                            [
+                                (
+                                    dy.weekday() <= 4 if load_type == 'wkdy'
+                                    else dy.weekday() == (
+                                        5 if load_type == 'sat' else 6
+                                    )
+                                ) and dy.time() == time and
+                                dy.month == mn and dy.year == yr
+                                for dy in df.index
+                            ], col_name
+                        ]
                     )
-                ), ' in ', timestamp.ctime()[4:7], ' ', timestamp.ctime()[-4:]
-            ]))
-            plt.ylabel(y_label)
-            # set minor grid line
-            minorLocator = MultipleLocator(
-                (0.025 if max_value < 2.0 else 100)
-                if max_value <= 2000.0 else 2.5*10**(
-                    len(str(int(max_value)))-2
+                    max_value = max(max_value, data[-1].max())
+                # create box plot
+                plt.figure(mn*fig_num)
+                ax = plt.subplot(111)
+                plt.boxplot(data, labels=[
+                    time.strftime('%H:%M') if time.minute == 0 else ''
+                    for time in times
+                ], showfliers=showfliers)
+                # set axis label
+                timestamp = df.loc[[
+                    dy.month == mn for dy in df.index
+                ], :].index[0]
+                plt.xlabel(''.join([
+                    'Time on ', (
+                        'weekdays' if load_type == 'wkdy' else (
+                            'Saturdays' if load_type == 'sat' else 'Sundays'
+                        )
+                    ), ' in ', timestamp.ctime()[4:7], ' ', str(yr)
+                ]))
+                plt.ylabel(y_label)
+                # set minor grid line
+                minorLocator = MultipleLocator(
+                    (0.025 if max_value < 2.0 else 100)
+                    if max_value <= 2000.0 else 2.5*10**(
+                        len(str(int(max_value)))-2
+                    )
                 )
-            )
-            ax.yaxis.set_minor_locator(minorLocator)
-            majorLocator = MultipleLocator(
-                (0.05 if max_value < 2.0 else 200)
-                if max_value <= 2000.0 else 5.0*10**(
-                    len(str(int(max_value)))-2
+                ax.yaxis.set_minor_locator(minorLocator)
+                majorLocator = MultipleLocator(
+                    (0.05 if max_value < 2.0 else 200)
+                    if max_value <= 2000.0 else 5.0*10**(
+                        len(str(int(max_value)))-2
+                    )
                 )
-            )
-            ax.yaxis.set_major_locator(majorLocator)
-            plt.grid(b=True, which='major', color='k', axis='y')
-            # rotate x-axis labels
-            locs, labels = plt.xticks()
-            plt.setp(labels, rotation=90)
-            # create more space for x-axis labels
-            plt.subplots_adjust(top=0.95, bottom=0.2)
-            # set minimum for y-axis as zero
-            if max_value > 2.0:
-                ax.set_ylim([0, None])
-            else:
-                ax.set_ylim([0.8, 1.1])
-            # save plots
-            savefig_for_file(''.join([
-               folder_path, '/', load_type, '-load-profile-', col_name, '-',
-               '%02i' % mn
-            ]), diagram_types)
+                ax.yaxis.set_major_locator(majorLocator)
+                plt.grid(b=True, which='major', color='k', axis='y')
+                # rotate x-axis labels
+                locs, labels = plt.xticks()
+                plt.setp(labels, rotation=90)
+                # create more space for x-axis labels
+                plt.subplots_adjust(top=0.95, bottom=0.2)
+                # set minimum for y-axis as zero
+                if max_value > 2.0:
+                    ax.set_ylim([0, None])
+                else:
+                    ax.set_ylim([0.8, 1.1])
+                # save plots
+                savefig_for_file(''.join([
+                   folder_path, '/', load_type, '-load-profile-',
+                   col_name, '-', '%02i' % mn, '-', '%04i' % yr
+                ]), diagram_types)
 
 
 # test functions
