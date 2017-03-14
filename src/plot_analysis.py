@@ -17,7 +17,7 @@ from pathlib import Path
 # import third party libraries
 import matplotlib
 import pandas as pd
-import pylab as plt
+import matplotlib.pyplot as plt
 
 
 # global variables for plotting

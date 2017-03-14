@@ -17,15 +17,15 @@ import random
 # import third party libraries
 from matplotlib.ticker import MultipleLocator
 import pandas as pd
-import pylab as plt
+import matplotlib.pyplot as plt
 
 # import user-defined libraries
 from plot_analysis import savefig_for_file, mkdir_if_not_exist
 
 
 # write functions
-def dfhour_profile_plot(df, folder_path, col_name='kW',
-                        y_label='Average building power consumption [kW]',
+def dfhour_profile_plot(df, folder_path, col_name='CLG',
+                        y_label='Instantaneous building load [kW]',
                         showfliers=True, diagram_types=['png']):
     """
         This function plots the hourly kVA and kWh profiles of weekdays every
