@@ -93,6 +93,8 @@ def histogram_plot(df, folder_path, col_name='CLG',
             dat, bins=bins-1, range=(delta_dat, bins*delta_dat),
             weights=(duration/3600.0)
         )
+        plt.grid(b=True, which='major', color='k', axis='y')
+        plt.grid(b=True, which='major', color='k', axis='x')
 
         # y-axis label
         plt.ylabel('Hours of operation')
@@ -181,6 +183,7 @@ if __name__ == '__main__':
     assert Path('../testplots/histogram-CLG-2015-overall.png').exists()
     assert not Path('../testplots/histogram-CLG-2016-overall.png').exists()
     assert not Path('../testplots/histogram-CLG-2014-overall.png').exists()
-    assert Path('../testplots/wkdy-load-profile-CLG-2016-01.png').exists()
+    assert Path('../testplots/histogram-CLG-2016-01.png').exists()
 
     print('All functions in', os.path.basename(__file__), 'are ok')
+    print('Please delete plots in ../testplots/ upon completing inspection')

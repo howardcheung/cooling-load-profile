@@ -12,6 +12,7 @@
 from datetime import datetime
 import os
 import pathlib
+import pdb
 import random
 
 # import third party libraries
@@ -90,7 +91,7 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
                     )
                     max_value = max(max_value, data[-1].max())
                 # skip plot if the size of data array is insufficient
-                if len(data[0]) < 27:
+                if len(data[0]) < 27-8:
                     continue
                 # create box plot
                 plt.figure(mn*fig_num)
@@ -127,6 +128,7 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
                 )
                 ax.yaxis.set_major_locator(majorLocator)
                 plt.grid(b=True, which='major', color='k', axis='y')
+                plt.grid(b=True, which='minor', color='k', axis='y')
                 # rotate x-axis labels
                 locs, labels = plt.xticks()
                 plt.setp(labels, rotation=90)
@@ -162,3 +164,4 @@ if __name__ == '__main__':
     assert not Path('../testplots/wkdy-load-profile-CLG-2014-01.png').exists()
 
     print('All functions in', os.path.basename(__file__), 'are ok')
+    print('Please delete plots in ../testplots/ upon completing inspection')
