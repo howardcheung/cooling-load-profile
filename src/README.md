@@ -3,7 +3,7 @@ This directory hosts all source file related to the development.
 
 # Files
 * `data_read.py`: functions to read data files
-* `gui_draft.py`: draft of the main GUI
+* `gui_main.py`: script file for the main GUI
 * `plot_analysis.py`: functions to make plots
 * `plot_histograms.py`: making histograms
 * `plot_wkdyseries.py`: making of the box plots
