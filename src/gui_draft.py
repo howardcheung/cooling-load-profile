@@ -169,10 +169,10 @@ class MainGUI(wx.Frame):
     def OnOpen(self, evt):
         """
             Function to open a file
-            Reference: https://wxpython.org/Phoenix/docs/html/wx.FileDialog.html
+            Reference:
+            https://wxpython.org/Phoenix/docs/html/wx.FileDialog.html
         """
-        #proceed asking to the user the new file to open
-
+        # proceed asking to the user the new directory to open
         openFileDialog = wx.FileDialog(
             self, 'Open file', '', '',
             ''.join([
@@ -183,7 +183,7 @@ class MainGUI(wx.Frame):
         )
 
         if openFileDialog.ShowModal() == wx.ID_CANCEL:
-            return False # the user changed idea...
+            return False  # the user changed idea...
 
         # proceed loading the file chosen by the user
         # this can be done with e.g. wxPython input streams:
@@ -191,15 +191,16 @@ class MainGUI(wx.Frame):
         self.tc1.SetValue(filepath)
 
         if not isfile(filepath):
-            wx.LogError('Cannot open file "%s".'%openFileDialog.GetPath())
+            wx.LogError('Cannot open file "%s".' % openFileDialog.GetPath())
             return False
 
     def DirOpen(self, evt):
         """
             Function to open a file
-            Reference: https://wxpython.org/Phoenix/docs/html/wx.DirDialog.html
+            Reference:
+            https://wxpython.org/Phoenix/docs/html/wx.DirDialog.html
         """
-        #proceed asking to the user the new file to open
+        # proceed asking to the user the new file to open
 
         openDirDialog = wx.DirDialog(
             None, 'Choose directory to save the plots', '',
@@ -219,7 +220,10 @@ class MainGUI(wx.Frame):
             Function to open instructions for time string
         """
         webbrowser.open(
-            u'https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior'
+            u''.join([
+                u'https://docs.python.org/3.5/library/datetime.html',
+                u'#strftime-and-strptime-behavior'
+            ])
         )
 
     def Analyzer(self, evt):
@@ -238,7 +242,9 @@ class MainGUI(wx.Frame):
         # function to be called upon finishing processing
         wx.CallLater(0, self.ShowMessage)
 
-def main():
+
+# define functions
+def gui_main():
     """
         Main function to intiate the GUI
     """
@@ -246,6 +252,7 @@ def main():
     MainGUI(None, title=u'BMS data cooling load analzer')
     app.MainLoop()
 
+
 # run the method for the GUI
 if __name__ == '__main__':
-    main()
+    gui_main()
