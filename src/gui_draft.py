@@ -17,7 +17,7 @@ class MainGUI(wx.Frame):
 
     def __init__(self, parent, title):    
         super(MainGUI, self).__init__(parent, title=title, 
-            size=(450, 300))  # size of the application window
+            size=(500, 350))  # size of the application window
 
         self.InitUI()
         self.Centre()
@@ -31,9 +31,11 @@ class MainGUI(wx.Frame):
 
         # title
         sizer.Add(
-            wx.StaticText(panel, label="BMS data cooling load analyzer"),
+            wx.StaticText(panel, label='BMS data cooling load analyzer'),
             pos=(0, 0),  # position: (from top to bottom, from left to right)
-            flag=wx.TOP|wx.LEFT|wx.BOTTOM,  # leave space at the top, left and bottom from the text to the other object
+            # leave space at the top, left and bottom from the text to the
+            # other object
+            flag=wx.TOP|wx.LEFT|wx.BOTTOM,
             border=10  # border required for flag indicators
         )
 
@@ -49,43 +51,51 @@ class MainGUI(wx.Frame):
         button1 = wx.Button(panel, label="Browse...")
         sizer.Add(button1, pos=(1, 4), flag=wx.TOP|wx.RIGHT, border=10)
 
-        # Inputs to the directory to save the plots
-        text2 = wx.StaticText(panel, label="Directory to save plots:")
+        # ask for existence of header as a checkbox
+        text2 = wx.StaticText(panel, label='Existence of header:')
         sizer.Add(text2, pos=(2, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
+        self.cb1 = wx.CheckBox(
+            panel, pos=(20, 20)
+        )
+        sizer.Add(self.cb1, pos=(2, 1), flag=wx.TOP|wx.RIGHT, border=10)
+
+        # Inputs to the directory to save the plots
+        text3 = wx.StaticText(panel, label="Directory to save plots:")
+        sizer.Add(text3, pos=(3, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
         # require additional object for textbox
         # with default path
         self.tc2 = wx.TextCtrl(panel, value='../testplots')
-        sizer.Add(self.tc2, pos=(2, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        sizer.Add(self.tc2, pos=(3, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         button2 = wx.Button(panel, label="Browse...")
-        sizer.Add(button2, pos=(2, 4), flag=wx.TOP|wx.RIGHT, border=10)
+        sizer.Add(button2, pos=(3, 4), flag=wx.TOP|wx.RIGHT, border=10)
 
         # Inputs to the format time string
-        text3 = wx.StaticText(panel, label="Format time string:")
-        sizer.Add(text3, pos=(3, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
+        text4 = wx.StaticText(panel, label="Format time string:")
+        sizer.Add(text4, pos=(4, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
         # require additional object for textbox
         self.tc3 = wx.TextCtrl(panel, value='%m/%d/%y %I:%M:%S %p CST')
-        sizer.Add(self.tc3, pos=(3, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        sizer.Add(self.tc3, pos=(4, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # Inputs to the unit of cooling load
-        text4 = wx.StaticText(panel, label="Unit of cooling load:")
-        sizer.Add(text4, pos=(4, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
+        text5 = wx.StaticText(panel, label="Unit of cooling load:")
+        sizer.Add(text5, pos=(5, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
         self.tc4 = wx.TextCtrl(panel, value='kW')
-        sizer.Add(self.tc4, pos=(4, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        sizer.Add(self.tc4, pos=(5, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # buttons at the bottom
         button_ok = wx.Button(panel, label="Analysis")
         button_ok.Bind(wx.EVT_BUTTON, self.Analyzer)
-        sizer.Add(button_ok, pos=(6, 3))
+        sizer.Add(button_ok, pos=(7, 4))
 
         # button to close the box
-        button_cancel = wx.Button(panel, label="Cancel")
-        button_cancel.Bind(wx.EVT_BUTTON, self.OnClose)
-        sizer.Add(button_cancel, pos=(6, 4), span=(1, 1),  
-            flag=wx.BOTTOM|wx.RIGHT, border=5)
+        # button_cancel = wx.Button(panel, label="Cancel")
+        # button_cancel.Bind(wx.EVT_BUTTON, self.OnClose)
+        # sizer.Add(button_cancel, pos=(7, 4), span=(1, 1),  
+            # flag=wx.BOTTOM|wx.RIGHT, border=5)
 
         # sizing of the window
         sizer.AddGrowableCol(2)  # expand to meet the window?
@@ -108,6 +118,7 @@ class MainGUI(wx.Frame):
         main_analyzer(
             datafilepath=self.tc1.GetValue(),
             foldername=self.tc2.GetValue(),
+            header=(1 if self.cb1.GetValue() else None),
             time_format=self.tc3.GetValue(),
             unit_name=self.tc4.GetValue()
         )
