@@ -8,6 +8,7 @@
 """
 
 # import python internal modules
+import webbrowser
 from os.path import isfile
 
 # import third party modules
@@ -36,7 +37,7 @@ class MainGUI(wx.Frame):
                 title of the window
         """
         super(MainGUI, self).__init__(
-            parent, title=title, size=(500, 350)
+            parent, title=title, size=(550, 375)
         )  # size of the application window
 
         self.initui()
@@ -51,7 +52,7 @@ class MainGUI(wx.Frame):
         # define the panel
         panel = wx.Panel(self)
 
-        sizer = wx.GridBagSizer(5, 5)  # making a grid in your box
+        sizer = wx.GridBagSizer(6, 5)  # making a grid in your box
 
         # title
         # leave space at the top, left and bottom from the text to the
@@ -81,7 +82,7 @@ class MainGUI(wx.Frame):
         sizer.Add(button1, pos=(1, 4), flag=wx.TOP | wx.RIGHT, border=10)
 
         # ask for existence of header as a checkbox
-        text2 = wx.StaticText(panel, label=u'Existence of header:')
+        text2 = wx.StaticText(panel, label=u'Existence of a header row:')
         sizer.Add(
             text2, pos=(2, 0), flag=wx.TOP | wx.LEFT | wx.BOTTOM, border=10
         )
@@ -120,29 +121,31 @@ class MainGUI(wx.Frame):
             border=10
         )
 
+        # a button for instructions
+        button_timeinstruct = wx.Button(
+            panel,
+            label=u'Open instructions to enter the format of the time string'
+        )
+        button_timeinstruct.Bind(wx.EVT_BUTTON, self.TimeInstruct)
+        sizer.Add(
+            button_timeinstruct, pos=(5, 1), span=(1, 2)
+        )
+
         # Inputs to the unit of cooling load
         text5 = wx.StaticText(panel, label=u'Unit of cooling load:')
         sizer.Add(
-            text5, pos=(5, 0), flag=wx.TOP | wx.LEFT | wx.BOTTOM, border=10
+            text5, pos=(6, 0), flag=wx.TOP | wx.LEFT | wx.BOTTOM, border=10
         )
         self.tc4 = wx.TextCtrl(panel, value=u'kW')
         sizer.Add(
-            self.tc4, pos=(5, 1), span=(1, 3), flag=wx.TOP | wx.EXPAND,
+            self.tc4, pos=(6, 1), span=(1, 3), flag=wx.TOP | wx.EXPAND,
             border=10
         )
 
         # buttons at the bottom
         button_ok = wx.Button(panel, label=u'Analysis')
         button_ok.Bind(wx.EVT_BUTTON, self.Analyzer)
-        sizer.Add(button_ok, pos=(7, 4))
-
-        # button to close the box
-        # button_cancel = wx.Button(panel, label=u'Cancel')
-        # button_cancel.Bind(wx.EVT_BUTTON, self.OnClose)
-        # sizer.Add(
-        #    button_cancel, pos=(7, 4), span=(1, 1),
-        #    flag=wx.BOTTOM | wx.RIGHT, border=5
-        # )
+        sizer.Add(button_ok, pos=(8, 4))
 
         # sizing of the window
         sizer.AddGrowableCol(2)  # expand to meet the window?
@@ -210,6 +213,14 @@ class MainGUI(wx.Frame):
         # this can be done with e.g. wxPython input streams:
         filepath = openDirDialog.GetPath()
         self.tc2.SetValue(filepath)
+
+    def TimeInstruct(self, evt):
+        """
+            Function to open instructions for time string
+        """
+        webbrowser.open(
+            u'https://docs.python.org/3.5/library/datetime.html#strftime-and-strptime-behavior'
+        )
 
     def Analyzer(self, evt):
         """
