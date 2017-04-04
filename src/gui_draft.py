@@ -70,10 +70,12 @@ class MainGUI(wx.Frame):
         sizer.Add(tc4, pos=(4, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # buttons at the bottom
-        button_ok = wx.Button(panel, label="Ok")
+        button_ok = wx.Button(panel, label="Analysis")
         sizer.Add(button_ok, pos=(6, 3))
 
+        # button to close the box
         button_cancel = wx.Button(panel, label="Cancel")
+        button_cancel.Bind(wx.EVT_BUTTON, self.OnClose)
         sizer.Add(button_cancel, pos=(6, 4), span=(1, 1),  
             flag=wx.BOTTOM|wx.RIGHT, border=5)
 
@@ -86,8 +88,12 @@ class MainGUI(wx.Frame):
         # wx.CallLater(0, self.ShowMessage)
 
     def ShowMessage(self):
-        wx.MessageBox('Processing Complete', 'Info', 
-            wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox(
+            'Processing Complete', 'Info', wx.OK | wx.ICON_INFORMATION
+        )
+        
+    def OnClose(self, e):
+        self.Close(True)  
 
 
 if __name__ == '__main__':
