@@ -11,6 +11,8 @@
 
 import wx
 
+from main_analyzer import main_analyzer
+
 class MainGUI(wx.Frame):
 
     def __init__(self, parent, title):    
@@ -39,8 +41,10 @@ class MainGUI(wx.Frame):
         text1 = wx.StaticText(panel, label="Data file path:")
         sizer.Add(text1, pos=(1, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
-        tc1 = wx.TextCtrl(panel)  # require additional object for textbox
-        sizer.Add(tc1, pos=(1, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        # require additional object for textbox
+        # with default path
+        self.tc1 = wx.TextCtrl(panel, value='../dat/load.csv')
+        sizer.Add(self.tc1, pos=(1, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         button1 = wx.Button(panel, label="Browse...")
         sizer.Add(button1, pos=(1, 4), flag=wx.TOP|wx.RIGHT, border=10)
@@ -49,8 +53,10 @@ class MainGUI(wx.Frame):
         text2 = wx.StaticText(panel, label="Directory to save plots:")
         sizer.Add(text2, pos=(2, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
-        tc2 = wx.TextCtrl(panel)  # require additional object for textbox
-        sizer.Add(tc2, pos=(2, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        # require additional object for textbox
+        # with default path
+        self.tc2 = wx.TextCtrl(panel, value='../testplots')
+        sizer.Add(self.tc2, pos=(2, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         button2 = wx.Button(panel, label="Browse...")
         sizer.Add(button2, pos=(2, 4), flag=wx.TOP|wx.RIGHT, border=10)
@@ -60,18 +66,19 @@ class MainGUI(wx.Frame):
         sizer.Add(text3, pos=(3, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
         # require additional object for textbox
-        tc3 = wx.TextCtrl(panel, value='%m/%d/%y %I:%M:%S %p CST')
-        sizer.Add(tc3, pos=(3, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        self.tc3 = wx.TextCtrl(panel, value='%m/%d/%y %I:%M:%S %p CST')
+        sizer.Add(self.tc3, pos=(3, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # Inputs to the unit of cooling load
         text4 = wx.StaticText(panel, label="Unit of cooling load:")
         sizer.Add(text4, pos=(4, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
-        tc4 = wx.TextCtrl(panel, value='kW')
-        sizer.Add(tc4, pos=(4, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
+        self.tc4 = wx.TextCtrl(panel, value='kW')
+        sizer.Add(self.tc4, pos=(4, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # buttons at the bottom
         button_ok = wx.Button(panel, label="Analysis")
+        button_ok.Bind(wx.EVT_BUTTON, self.Analyzer)
         sizer.Add(button_ok, pos=(6, 3))
 
         # button to close the box
@@ -94,7 +101,17 @@ class MainGUI(wx.Frame):
         )
         
     def OnClose(self, e):
-        self.Close(True)  
+        self.Close(True)
+
+    def Analyzer(self, e):
+        # get the value from the boxes and conduct the analysis
+        main_analyzer(
+            datafilepath=self.tc1.GetValue(),
+            foldername=self.tc2.GetValue(),
+            time_format=self.tc3.GetValue(),
+            unit_name=self.tc4.GetValue()
+        )
+        self.Close(True)  # close upon completion
 
 
 if __name__ == '__main__':
