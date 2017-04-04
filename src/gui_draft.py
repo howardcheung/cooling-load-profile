@@ -1,11 +1,11 @@
 ﻿#!/usr/bin/python
-'''
+"""
     This script file contains methods to define the graphical user interface
     of the tool.
 
     Author: Howard Cheung
     email: howard.at@gmail.com
-'''
+"""
 
 # import python internal modules
 from os.path import isfile
@@ -19,12 +19,12 @@ from main_analyzer import main_analyzer
 
 # define global variables
 class MainGUI(wx.Frame):
-    '''
+    """
         Class to hold the object for the main window of the application
-    '''
+    """
 
     def __init__(self, parent, title):
-        '''
+        """
             This is the initilization function for the GUI.
 
             Inputs:
@@ -34,7 +34,7 @@ class MainGUI(wx.Frame):
 
             title: str
                 title of the window
-        '''
+        """
         super(MainGUI, self).__init__(
             parent, title=title, size=(500, 350)
         )  # size of the application window
@@ -44,9 +44,9 @@ class MainGUI(wx.Frame):
         self.Show()
 
     def initui(self):
-        '''
+        """
             Initialize the position of objects in the UI
-        '''
+        """
 
         # define the panel
         panel = wx.Panel(self)
@@ -103,8 +103,8 @@ class MainGUI(wx.Frame):
             self.tc2, pos=(3, 1), span=(1, 3), flag=wx.TOP | wx.EXPAND,
             border=10
         )
-
         button2 = wx.Button(panel, label=u'Browse...')
+        button2.Bind(wx.EVT_BUTTON, self.DirOpen)
         sizer.Add(button2, pos=(3, 4), flag=wx.TOP | wx.RIGHT, border=10)
 
         # Inputs to the format time string
@@ -150,17 +150,17 @@ class MainGUI(wx.Frame):
         panel.SetSizer(sizer)
 
     def ShowMessage(self):
-        '''
+        """
             Function to show message about the completion of the analysis
-        '''
+        """
         wx.MessageBox(
             u'Processing Completed', u'Status', wx.OK | wx.ICON_INFORMATION
         )
 
     def OnClose(self, evt):
-        '''
+        """
             Function to close the main window
-        '''
+        """
         self.Close(True)
 
     def OnOpen(self, evt):
@@ -171,13 +171,16 @@ class MainGUI(wx.Frame):
         #proceed asking to the user the new file to open
 
         openFileDialog = wx.FileDialog(
-            self, "Open file", "", "",
-            "csv files (*.csv)|*.csv;xls files (*.xls)|*.xls;xlsx files (*.xlsx)|*.xlsx;",
-            wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+            self, 'Open file', '', '',
+            ''.join([
+                'csv files (*.csv)|*.csv;|',
+                'xls files (*.xls)|*.xls;|',
+                'xlsx files (*.xlsx)|*.xlsx'
+            ]), wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
         )
 
         if openFileDialog.ShowModal() == wx.ID_CANCEL:
-            return     # the user changed idea...
+            return False # the user changed idea...
 
         # proceed loading the file chosen by the user
         # this can be done with e.g. wxPython input streams:
@@ -185,13 +188,33 @@ class MainGUI(wx.Frame):
         self.tc1.SetValue(filepath)
 
         if not isfile(filepath):
-            wx.LogError("Cannot open file '%s'."%openFileDialog.GetPath())
-            return
+            wx.LogError('Cannot open file "%s".'%openFileDialog.GetPath())
+            return False
+
+    def DirOpen(self, evt):
+        """
+            Function to open a file
+            Reference: https://wxpython.org/Phoenix/docs/html/wx.DirDialog.html
+        """
+        #proceed asking to the user the new file to open
+
+        openDirDialog = wx.DirDialog(
+            None, 'Choose directory to save the plots', '',
+            wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST
+        )
+
+        if openDirDialog.ShowModal() == wx.ID_CANCEL:
+            return     # the user changed idea...
+
+        # proceed loading the file chosen by the user
+        # this can be done with e.g. wxPython input streams:
+        filepath = openDirDialog.GetPath()
+        self.tc2.SetValue(filepath)
 
     def Analyzer(self, evt):
-        '''
+        """
             Function to initiate the main analysis.
-        '''
+        """
         # Run the analyzer
         main_analyzer(
             datafilepath=self.tc1.GetValue(),
@@ -205,9 +228,9 @@ class MainGUI(wx.Frame):
         wx.CallLater(0, self.ShowMessage)
 
 def main():
-    '''
+    """
         Main function to intiate the GUI
-    '''
+    """
     app = wx.App()
     MainGUI(None, title=u'BMS data cooling load analzer')
     app.MainLoop()
