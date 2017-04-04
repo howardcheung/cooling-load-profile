@@ -59,7 +59,8 @@ class MainGUI(wx.Frame):
         text3 = wx.StaticText(panel, label="Format time string:")
         sizer.Add(text3, pos=(3, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
-        tc3 = wx.TextCtrl(panel)  # require additional object for textbox
+        # require additional object for textbox
+        tc3 = wx.TextCtrl(panel, value='%m/%d/%y %I:%M:%S %p CST')
         sizer.Add(tc3, pos=(3, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # Inputs to the unit of cooling load
