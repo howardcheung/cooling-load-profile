@@ -67,7 +67,7 @@ class MainGUI(wx.Frame):
         text4 = wx.StaticText(panel, label="Unit of cooling load:")
         sizer.Add(text4, pos=(4, 0), flag=wx.TOP|wx.LEFT|wx.BOTTOM, border=10)
 
-        tc4 = wx.TextCtrl(panel)  # require additional object for textbox
+        tc4 = wx.TextCtrl(panel, value='kW')
         sizer.Add(tc4, pos=(4, 1), span=(1, 3), flag=wx.TOP|wx.EXPAND, border=10)
 
         # buttons at the bottom
