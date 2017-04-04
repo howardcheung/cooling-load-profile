@@ -11,10 +11,10 @@
 
 import wx
 
-class Example(wx.Frame):
+class MainGUI(wx.Frame):
 
     def __init__(self, parent, title):    
-        super(Example, self).__init__(parent, title=title, 
+        super(MainGUI, self).__init__(parent, title=title, 
             size=(450, 300))  # size of the application window
 
         self.InitUI()
@@ -82,9 +82,16 @@ class Example(wx.Frame):
         
         panel.SetSizer(sizer)
 
+        # function to be called upon finishing processing
+        # wx.CallLater(0, self.ShowMessage)
+
+    def ShowMessage(self):
+        wx.MessageBox('Processing Complete', 'Info', 
+            wx.OK | wx.ICON_INFORMATION)
+
 
 if __name__ == '__main__':
   
     app = wx.App()
-    Example(None, title="BMS data cooling load analzer")
+    MainGUI(None, title="BMS data cooling load analzer")
     app.MainLoop()
