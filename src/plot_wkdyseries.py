@@ -10,15 +10,11 @@
 
 # import libraries
 from datetime import datetime
-import os
-import pathlib
-import pdb
-import random
 
 # import third party libraries
 from matplotlib.ticker import MultipleLocator
-import pandas as pd
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure, subplot, boxplot, grid, ylabel, \
+    xlabel, subplots_adjust, xticks, setp
 
 # import user-defined libraries
 from plot_analysis import savefig_for_file, mkdir_if_not_exist
@@ -65,7 +61,7 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
 
     # use one plot as an example for now
     # random number for fig number
-    fig_num = int(random.random()*1000.0)
+    fig_num = 1
     yr_array = range(df.index[0].year, df.index[-1].year+1)
     for yr in yr_array:
         for mn in range(1, 13):
@@ -94,9 +90,9 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
                 if len(data[0]) < 27-8:
                     continue
                 # create box plot
-                plt.figure(mn*fig_num)
-                ax = plt.subplot(111)
-                plt.boxplot(data, labels=[
+                figure(mn*fig_num)
+                ax = subplot(111)
+                boxplot(data, labels=[
                     time.strftime('%H:%M') if time.minute == 0 else ''
                     for time in times
                 ], showfliers=showfliers)
@@ -104,14 +100,14 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
                 timestamp = df.loc[[
                     dy.month == mn for dy in df.index
                 ], :].index[0]
-                plt.xlabel(''.join([
+                xlabel(''.join([
                     'Time on ', (
                         'weekdays' if load_type == 'wkdy' else (
                             'Saturdays' if load_type == 'sat' else 'Sundays'
                         )
                     ), ' in ', timestamp.ctime()[4:7], ' ', str(yr)
                 ]))
-                plt.ylabel(y_label)
+                ylabel(y_label)
                 # set minor grid line
                 minorLocator = MultipleLocator(
                     (0.025 if max_value < 2.0 else 100)
@@ -127,13 +123,13 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
                     )
                 )
                 ax.yaxis.set_major_locator(majorLocator)
-                plt.grid(b=True, which='major', color='k', axis='y')
-                plt.grid(b=True, which='minor', color='k', axis='y')
+                grid(b=True, which='major', color='k', axis='y')
+                grid(b=True, which='minor', color='k', axis='y')
                 # rotate x-axis labels
-                locs, labels = plt.xticks()
-                plt.setp(labels, rotation=90)
+                locs, labels = xticks()
+                setp(labels, rotation=90)
                 # create more space for x-axis labels
-                plt.subplots_adjust(top=0.95, bottom=0.2)
+                subplots_adjust(top=0.95, bottom=0.2)
                 # set minimum for y-axis as zero
                 if max_value > 2.0:
                     ax.set_ylim([0, None])
@@ -149,8 +145,8 @@ def dfhour_profile_plot(df, folder_path, col_name='CLG',
 # test functions
 if __name__ == '__main__':
 
+    from os.path import basename
     from pathlib import Path
-    import shutil
 
     from data_read import read_data
 
@@ -163,5 +159,5 @@ if __name__ == '__main__':
     assert Path('../testplots/wkdy-load-profile-CLG-2016-01.png').exists()
     assert not Path('../testplots/wkdy-load-profile-CLG-2014-01.png').exists()
 
-    print('All functions in', os.path.basename(__file__), 'are ok')
+    print('All functions in', basename(__file__), 'are ok')
     print('Please delete plots in ../testplots/ upon completing inspection')

@@ -67,12 +67,12 @@ def main_analyzer(datafilepath: str, foldername: str='./testplots',
 # testing functions
 if __name__ == '__main__':
 
-    import os
+    from os.path import basename
     from pathlib import Path
-    import shutil
+    from shutil import rmtree
 
     if Path('../testplots').exists():
-        shutil.rmtree('../testplots')
+        rmtree('../testplots')
     main_analyzer('../dat/load.csv', '../testplots')
     assert Path('../testplots/wkdy-load-profile-CLG-2015-01.png').exists()
     assert Path('../testplots/wkdy-load-profile-CLG-2016-01.png').exists()
@@ -81,6 +81,6 @@ if __name__ == '__main__':
     assert not Path('../testplots/histogram-CLG-2016-overall.png').exists()
     assert not Path('../testplots/histogram-CLG-2014-overall.png').exists()
     assert Path('../testplots/histogram-CLG-2016-01.png').exists()
-    print('All functions in', os.path.basename(__file__), 'are ok')
+    print('All functions in', basename(__file__), 'are ok')
     print('Please delete plots in ../testplots/ upon completing inspection')
     
