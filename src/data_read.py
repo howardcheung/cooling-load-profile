@@ -11,18 +11,19 @@
 # import python internal libraries
 from datetime import datetime
 from math import isnan
-import os
+from os.path import basename
 
 # import third party libraries
 from numpy import where
-import pandas as pd
+from pandas import DataFrame, Series, ExcelFile, read_csv, read_excel
+from pandas.tslib import Timestamp
 
 # import user-defined libraries
 
 
 # write functions
 def read_data(filename: str, header: int=None,
-              time_format: str='%m/%d/%y %I:%M:%S %p CST') -> pd.DataFrame:
+              time_format: str='%m/%d/%y %I:%M:%S %p CST') -> DataFrame:
     """
         This function reads the data in filename that is in specified format
         and returns a pandas dataframe with time data as the index and
@@ -52,14 +53,14 @@ def read_data(filename: str, header: int=None,
     # read the file. Read the file as two columns first to conduct
     # preprocessing before
     if ext == 'xlsx' or ext == 'xls':
-        with pd.ExcelFile(filename) as xlsx:
+        with ExcelFile(filename) as xlsx:
             for sheet_name in xlsx.sheet_names:
-                pddf = pd.read_excel(
+                pddf = read_excel(
                     xlsx, sheet_name, header=header, names=['Time', 'CLG']
                 )
                 break
     elif ext == 'csv':
-        pddf = pd.read_csv(filename, header=header, names=['Time', 'CLG'])
+        pddf = read_csv(filename, header=header, names=['Time', 'CLG'])
     else:
         raise ValueError(''.join([
             'The file extension of the data file cannot be recognized by ',
@@ -117,20 +118,20 @@ def interpolate_with_s(mid_date: datetime, a_date: datetime, b_date: datetime,
         (b_date-a_date).seconds+a_value
 
 
-def check_nan(wseries: pd.Series) -> pd.Series:
+def check_nan(wseries: Series) -> Series:
     """
         This function checks the values inside the series. If any of them
         are nan or str, user interpolation with adjacent values to
-        substitute it. Returns the corrected pd.Series
+        substitute it. Returns the corrected Series
 
         Inputs:
         ==========
-        wseries: pd.Series
+        wseries: Series
             pandas Series data with values in float and index as
             datetime.datetime object
     """
 
-    if len(wseries[pd.Series([
+    if len(wseries[Series([
         (type(val) == str or isnan(val)) for val in wseries
     ], index=wseries.index)]) == 0:
         return wseries  # nothing to change
@@ -145,14 +146,14 @@ def check_nan(wseries: pd.Series) -> pd.Series:
         except ValueError:
             return float('nan')
 
-    wseries = pd.Series(
+    wseries = Series(
         [_float_or_nan(val) for val in wseries], index=wseries.index,
         name=wseries.name
     )
 
     # continue with interpolation or extrapolation if needed
     inds = where(
-        pd.Series([
+        Series([
             (isinstance(val, str) or isnan(val)) for val in wseries
         ], index=wseries.index)
     )[0]  # locate the position of the problematic readings
@@ -187,8 +188,7 @@ def check_nan(wseries: pd.Series) -> pd.Series:
     return wseries
 
 
-def cal_each_duration(ind: int, timeind: pd.tslib.Timestamp,
-                      wseries: pd.Series) -> float:
+def cal_each_duration(ind: int, timeind: Timestamp, wseries: Series) -> float:
     """
         This function calculates the duration for each data point in the time
         series given by the acqusition interval of the data
@@ -198,10 +198,10 @@ def cal_each_duration(ind: int, timeind: pd.tslib.Timestamp,
         ind: int
             index number in the pandas Series
 
-        timeind: pd.tslib.Timestamp
+        timeind: tslib.Timestamp
             time stamp at the index being analyzed
 
-        wseries: pd.Series
+        wseries: Series
             pandas Series data with values in float and index as
             datetime.datetime object
     """
@@ -228,9 +228,9 @@ if __name__ == '__main__':
         else:
             TEST_DF = read_data(testfilename, header=None)
         assert TEST_DF.loc[TEST_DF.index[2], 'CLG'] == 1
-        assert isinstance(TEST_DF.index[0], pd.tslib.Timestamp)
+        assert isinstance(TEST_DF.index[0], Timestamp)
         assert TEST_DF.loc[TEST_DF.index[0], 'Duration'] == 60*30
         assert TEST_DF.loc[TEST_DF.index[2], 'Duration'] == 60*30
         assert TEST_DF.loc[TEST_DF.index[-1], 'Duration'] == 60*30
 
-    print('All functions in', os.path.basename(__file__), 'are ok')
+    print('All functions in', basename(__file__), 'are ok')
