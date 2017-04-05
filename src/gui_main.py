@@ -8,7 +8,7 @@
 """
 
 # import python internal modules
-import webbrowser
+from webbrowser import open as webbrowseropen
 from os.path import isfile
 
 # import third party modules
@@ -219,7 +219,7 @@ class MainGUI(wx.Frame):
         """
             Function to open instructions for time string
         """
-        webbrowser.open(
+        webbrowseropen(
             u''.join([
                 u'https://docs.python.org/3.5/library/datetime.html',
                 u'#strftime-and-strptime-behavior'
