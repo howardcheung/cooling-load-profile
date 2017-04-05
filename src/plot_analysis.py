@@ -15,16 +15,14 @@ from os import mkdir
 from pathlib import Path
 
 # import third party libraries
-import matplotlib
-import pandas as pd
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import xlabel, xticks, setp, savefig, clf
 
 
 # global variables for plotting
 LineStyles = ['-', ':', '-.', '--']*5
-LineWidths = [a for a in itertools.chain.from_iterable(
-    [[1+2*x]*4 for x in range(5)]
-)]
+LineWidths = [a for a in itertools.chain.from_iterable([
+    [1+2*x]*4 for x in range(5)
+])]
 
 
 # write functions
@@ -46,9 +44,9 @@ def set_date_for_xaxis():
     """
         Function to set the dates on x-axis appropriately
     """
-    plt.xlabel('Date')
-    locs, labels = plt.xticks()
-    plt.setp(labels, rotation=90)
+    xlabel('Date')
+    locs, labels = xticks()
+    setp(labels, rotation=90)
 
 
 def savefig_for_file(filename: str, diagram_types: list=['pdf'],
@@ -71,10 +69,10 @@ def savefig_for_file(filename: str, diagram_types: list=['pdf'],
     """
 
     for ext in diagram_types:
-        plt.savefig(
+        savefig(
             '.'.join([filename, ext]), dpi=300, format=ext, frameon=False
         )
-    plt.clf()
+    clf()
 
 
 def list_get_legend_handles_labels(list_of_axes: list):
@@ -101,12 +99,12 @@ def list_get_legend_handles_labels(list_of_axes: list):
 # testing functions
 if __name__ == '__main__':
 
-    import os
-    import shutil
+    from os.path import basename
+    from shutil import rmtree
 
     # testing the make directory function mkdif_if_not_exist
     mkdir_if_not_exist('./testtesttest/')
     assert Path('./testtesttest/').exists()
-    shutil.rmtree('./testtesttest/')
+    rmtree('./testtesttest/')
 
-    print('All functions in', os.path.basename(__file__), 'are ok')
+    print('All functions in', basename(__file__), 'are ok')

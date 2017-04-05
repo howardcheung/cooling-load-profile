@@ -9,13 +9,13 @@
 """
 
 # import python internal libraries
-import calendar
+from calendar import monthrange
 from datetime import datetime, date
 from math import ceil
-import os
 
 # import third party libraries
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure, hist, grid, ylabel, xlabel, \
+    subplots_adjust
 
 # import user-defined modules
 from plot_analysis import savefig_for_file, mkdir_if_not_exist
@@ -81,7 +81,7 @@ def histogram_plot(df, folder_path, col_name='CLG',
         """
 
         # start plotting
-        plt.figure(1)
+        figure(1)
 
         # calculate the required limits and number of bins
         max_dat = dat.max()
@@ -89,39 +89,39 @@ def histogram_plot(df, folder_path, col_name='CLG',
         bins = ceil(max_dat/delta_dat)
 
         # plot primary axis, eliminate the first bar for non-operating hours
-        plt.hist(
+        hist(
             dat, bins=bins-1, range=(delta_dat, bins*delta_dat),
             weights=(duration/3600.0)
         )
-        plt.grid(b=True, which='major', color='k', axis='y')
-        plt.grid(b=True, which='major', color='k', axis='x')
+        grid(b=True, which='major', color='k', axis='y')
+        grid(b=True, which='major', color='k', axis='x')
 
         # y-axis label
-        plt.ylabel('Hours of operation')
+        ylabel('Hours of operation')
 
         # use the first timestamp to locate month and year
         timestamp = dat.index[0]
 
         # x-axis label
         if overall:
-            plt.xlabel(''.join([
+            xlabel(''.join([
                 xlabel_name, ' in', ' ', str(timestamp.year), add_xlabel
             ]))
             # print and show figure
             # move figure to hold everything in the diagram
-            plt.subplots_adjust(top=0.9, bottom=0.2, left=0.15, right=0.9)
+            subplots_adjust(top=0.9, bottom=0.2, left=0.15, right=0.9)
             savefig_for_file(''.join([
                 folder_path, '/', 'histogram-CLG-', str(timestamp.year),
                 '-overall'
             ]), diagram_types)
         else:
-            plt.xlabel(''.join([
+            xlabel(''.join([
                 xlabel_name, ' in ', timestamp.ctime()[4:7], ' ',
                 str(timestamp.year), add_xlabel
             ]))
             # print and show figure
             # move figure to hold everything in the diagram
-            plt.subplots_adjust(top=0.9, bottom=0.2, left=0.15, right=0.9)
+            subplots_adjust(top=0.9, bottom=0.2, left=0.15, right=0.9)
             savefig_for_file(''.join([
                 folder_path, '/', 'histogram-CLG-', str(timestamp.year), '-',
                 '%02i' % timestamp.month
@@ -132,7 +132,7 @@ def histogram_plot(df, folder_path, col_name='CLG',
     for yr in yr_array:
         for mn in range(1, 13):
             # select data within the same month
-            day_lim = calendar.monthrange(yr, mn)[1]
+            day_lim = monthrange(yr, mn)[1]
             temp_df = df.loc[
                 datetime(yr, mn, 1, 0, 0):datetime(
                     yr, mn, day_lim, 23, 59
@@ -170,8 +170,8 @@ def histogram_plot(df, folder_path, col_name='CLG',
 # testing functions
 if __name__ == '__main__':
 
+    from os.path import basename
     from pathlib import Path
-    import shutil
 
     from data_read import read_data
 
@@ -185,5 +185,5 @@ if __name__ == '__main__':
     assert not Path('../testplots/histogram-CLG-2014-overall.png').exists()
     assert Path('../testplots/histogram-CLG-2016-01.png').exists()
 
-    print('All functions in', os.path.basename(__file__), 'are ok')
+    print('All functions in', basename(__file__), 'are ok')
     print('Please delete plots in ../testplots/ upon completing inspection')

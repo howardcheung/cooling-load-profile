@@ -11,7 +11,6 @@
 # import python internal libraries
 from datetime import datetime
 from math import isnan
-from os.path import basename
 
 # import third party libraries
 from numpy import where
@@ -217,6 +216,8 @@ def cal_each_duration(ind: int, timeind: Timestamp, wseries: Series) -> float:
 
 # testing functions
 if __name__ == '__main__':
+
+    from os.path import basename
 
     for testfilename in [
         '../dat/load.csv', '../dat/load.xlsx',
