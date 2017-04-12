@@ -37,7 +37,7 @@ class MainGUI(wx.Frame):
                 title of the window
         """
         super(MainGUI, self).__init__(
-            parent, title=title, size=(550, 375)
+            parent, title=title, size=(625, 400)
         )  # size of the application window
 
         self.initui()
